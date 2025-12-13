@@ -1,29 +1,48 @@
 const gallery = document.getElementById("gallery");
 
-async function loadImages() {
-  const response = await fetch("./src/data/data.json");
-  const images = await response.json();
+async function loadMedia() {
+  const res = await fetch("./src/data/data.json");
+  const medias = await res.json();
 
-  images.sort(() => Math.random() - 0.5);
+  medias.sort(() => {
+    Math.random() - 0.5
+  });
 
-  images.forEach(img => {
+  medias.forEach(media => {
     const wrapper = document.createElement("div");
     wrapper.className = "break-inside-avoid flex flex-col mb-2";
 
-    wrapper.innerHTML = `
+    if (media.type === "img") {
+      wrapper.innerHTML = `
       <div class="relative overflow-hidden rounded-xl group">
-        <img src="./src/assets/images/${img.src}" class="w-full transition-transform duration-300 group-hover:scale-110" />
+        <img src="./src/assets/images/${media.src}" class="w-full transition-transform duration-300 group-hover:scale-110" />
         <div class="absolute inset-0 bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
       </div>
       <div class="flex justify-between items-center p-2 text-sm">
-        <span>${img.name}</span>
-        <a href="./src/assets/images/${img.name}" download class="cursor-pointer">
+        <span>${media.name}</span>
+        <a href="./src/assets/images/${media.name}" download class="cursor-pointer">
           <i class="fa-regular fa-floppy-disk"></i>
         </a>
       </div>
     `
+    } else if (media.type === "video") {
+      wrapper.innerHTML = `
+      <div class="relative overflow-hidden rounded-xl group">
+        <video autoplay muted loop class="w-full transition-transform duration-300 group-hover:scale-110">
+          <source src="./src/assets/videos/${media.src}" type="video/mp4"/>
+        </video>
+        <div class="absolute inset-0 bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+      </div>
+      <div class="flex justify-between items-center p-2 text-sm">
+        <span>${media.name}</span>
+        <a href="./src/assets/videos/${media.name}" download class="cursor-pointer">
+          <i class="fa-regular fa-floppy-disk"></i>
+        </a>
+      </div>
+    `
+    }
     gallery.appendChild(wrapper);
   });
 }
 
-loadImages();
+loadMedia();
